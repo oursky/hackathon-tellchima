@@ -2,6 +2,18 @@
 
 Make Chima New Again, with a competition
 
+## Format
+
+1. Everyone develops their own application in their own directory respectively.
+2. Make sure you have at least a README and instructions on how to start your
+   application.
+3. It is not required to deploy your application, as long as the slash command
+   works in the demo.
+   - Of course you would also deploy it to our staging k8s / leverage service
+     like [Render](https://render.com/).
+4. Demo time is TBC. Expect some time around the 1st week of working after
+   Christmas holidays.
+
 ## Getting started
 
 ### Creating slash command
