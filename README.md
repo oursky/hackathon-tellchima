@@ -45,7 +45,7 @@ test message with the following curl:
 > curl \
     -H 'Authorization: Bearer OAUTH_TOKEN' \
     -H 'Content-type: application/json' \
-    -d '{"channel": "C04GPBBHRM4", "text": "I_FORGOT_TO_REPLACE_THE_TEST_MESSAGE"}'
+    -d '{"channel": "C04GPBBHRM4", "text": "I_FORGOT_TO_REPLACE_THE_TEST_MESSAGE"}' \
     https://slack.com/api/chat.postMessage
 ```
 
