@@ -13,5 +13,8 @@ pkgs.mkShell {
   packages = [
     pkgs.elixir_1_14
     pkgs.postgresql_15
+
+    pkgs.darwin.apple_sdk.frameworks.CoreFoundation
+    pkgs.darwin.apple_sdk.frameworks.CoreServices
   ];
 }
