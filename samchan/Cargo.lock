@@ -856,16 +856,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b4b9743ed687d4b4bcedf9ff5eaa7398495ae14e61cba0a295704edbc7decde"
 
 [[package]]
-name = "samchan"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "diesel",
- "dotenvy",
- "serde",
-]
-
-[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -974,6 +964,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tell-machi"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "diesel",
+ "dotenvy",
+ "serde",
 ]
 
 [[package]]
