@@ -42,7 +42,7 @@ For dev purpose, the slack app has been added to `#p-tellchima` already. You cou
 test message with the following curl:
 
 ```sh
-> xh \
+> curl \
     -H 'Authorization: Bearer OAUTH_TOKEN' \
     -H 'Content-type: application/json' \
     -d '{"channel": "C04GPBBHRM4", "text": "I_FORGOT_TO_REPLACE_THE_TEST_MESSAGE"}'
