@@ -27,6 +27,9 @@ executable tellchima
     -- Modules included in this executable, other than Main.
     other-modules:
         Controller.Webhook.TellChima
+        Model.TellChimaWebhookRequest
+        Model.TellChimaException
+        Model.ErrorResponse
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -35,6 +38,8 @@ executable tellchima
         warp ==3.3.23,
         wai ==3.2.3,
         http-types ==0.12.3,
-        aeson ==2.1.1.0
+        aeson ==2.1.1.0,
+        utf8-string ==1.0.2,
+        http-api-data ==0.5
     hs-source-dirs: app
     default-language: Haskell2010

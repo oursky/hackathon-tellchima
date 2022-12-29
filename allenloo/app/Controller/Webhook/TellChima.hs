@@ -1,45 +1,32 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Controller.Webhook.TellChima where
 
-import Control.Exception (Exception, SomeException, throw, try)
-import Control.Monad.IO.Class (liftIO)
+import Control.Exception (SomeException, throw, try)
 import Data.Aeson
+import Data.ByteString.Lazy.UTF8 (toString)
 import Data.Data (Typeable)
 import GHC.Generics
-import Network.HTTP.Types (status200, status400, status404, status405)
+import Model.ErrorResponse (badRequestResponse)
+import Model.TellChimaException
+import Model.TellChimaWebhookRequest
+import Network.HTTP.Types (status200)
 import Network.HTTP.Types.Header (hContentType)
-import Network.Wai (Request, Response, lazyRequestBody, responseBuilder, responseLBS)
+import Network.Wai (Request, Response, lazyRequestBody, responseLBS)
+import Web.FormUrlEncoded
 
-data Test = Test
-  { id :: Int,
-    content :: String
-  }
-  deriving (Generic, ToJSON, FromJSON, Show)
-
-data TellChimaException = BadRequest {message :: String} deriving (Show, Typeable)
-
-instance Exception TellChimaException
-
-parseTellChimaWebhookRequest :: Request -> IO Test
+parseTellChimaWebhookRequest :: Request -> IO TellChimaWebhookRequest
 parseTellChimaWebhookRequest req = do
   bodyStr <- lazyRequestBody req
-  case decode bodyStr of
-    Just body -> return body
-    Nothing -> throw (BadRequest "Failed to parse JSON")
+  case urlDecodeAsForm bodyStr of
+    Left _ -> throw (BadRequest "Failed to parse url encoded form")
+    Right body -> return body
 
 tellChimaWebhookHandler :: Request -> IO Response
 tellChimaWebhookHandler req = do
-  result <- try (parseTellChimaWebhookRequest req) :: IO (Either SomeException Test)
+  result <- try (parseTellChimaWebhookRequest req) :: IO (Either SomeException TellChimaWebhookRequest)
   case result of
-    Left ex ->
-      return $
-        responseLBS
-          status400
-          [(hContentType, "application/json")]
-          "400 - Bad Request"
+    Left ex -> return badRequestResponse
     Right body ->
       return $
         responseLBS

@@ -4,11 +4,8 @@ module Main where
 
 import Control.Exception (SomeException, try)
 import Controller.Webhook.TellChima
-import Data.Aeson
-import GHC.Generics
-import Network.HTTP.Types (status200, status404, status405, status500)
-import Network.HTTP.Types.Header (hAllow, hContentType)
-import Network.Wai (Application, Request, Response, rawPathInfo, requestMethod, responseLBS)
+import Model.ErrorResponse (methodNotAllowedResponse, notFoundResponse, serverErrorResponse)
+import Network.Wai (Application, Request, Response, rawPathInfo, requestMethod)
 import Network.Wai.Handler.Warp (run)
 
 main :: IO ()
@@ -27,29 +24,14 @@ app req mapResponse = do
       ) ::
       IO (Either SomeException Response)
   case result of
-    Left ex ->
-      mapResponse $
-        responseLBS
-          status500
-          [(hContentType, "application/json")]
-          "500 - Server Error"
+    Left ex -> mapResponse serverErrorResponse
     Right resp -> mapResponse resp
 
 webhookTellChimaRoute :: Request -> IO Response
 webhookTellChimaRoute req =
   case requestMethod req of
     "POST" -> tellChimaWebhookHandler req
-    _ -> do
-      return $
-        responseLBS
-          status405
-          [(hAllow, "POST"), (hContentType, "application/json")]
-          "405 - Method Not Allowed"
+    _ -> do return methodNotAllowedResponse
 
 notFoundRoute :: IO Response
-notFoundRoute =
-  return $
-    responseLBS
-      status404
-      [(hContentType, "application/json")]
-      "404 - Not Found"
+notFoundRoute = do return notFoundResponse
