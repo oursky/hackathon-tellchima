@@ -2,10 +2,7 @@ import Config
 
 # Configure your database
 config :tellchima, Tellchima.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "tellchima_dev",
+  url: "postgresql://postgres@localhost:5433/tellchima_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
