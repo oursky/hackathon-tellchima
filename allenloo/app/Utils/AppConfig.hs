@@ -15,5 +15,10 @@ getAppConfig = do
   configMap <- Map.fromList <$> parseFile envFilePath
   return $
     AppConfig
-      { slackCommandSigningSecret = loadRequiredConfigFromMap "SLACK_COMMAND_SIGNING_SECRET" configMap
+      { slackCommandSigningSecret = loadRequiredConfigFromMap "SLACK_COMMAND_SIGNING_SECRET" configMap,
+        dbHost = loadRequiredConfigFromMap "DB_HOST" configMap,
+        dbPort = loadRequiredConfigFromMap "DB_PORT" configMap,
+        dbUser = loadRequiredConfigFromMap "DB_USER" configMap,
+        dbPass = loadRequiredConfigFromMap "DB_PASS" configMap,
+        dbName = loadRequiredConfigFromMap "DB_NAME" configMap
       }
