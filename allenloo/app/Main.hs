@@ -29,7 +29,9 @@ app :: AppDependencies -> Application
 app dep req mapResponse = do
   result <- try (runReaderT (rootHandler req) dep) :: IO (Either SomeException Response)
   case result of
-    Left ex -> mapResponse serverErrorResponse
+    Left ex -> do
+      putStrLn $ "[Main]: Unhandled exception - " ++ show ex
+      mapResponse serverErrorResponse
     Right resp -> mapResponse resp
 
 rootHandler :: Request -> ReaderT AppDependencies IO Response
