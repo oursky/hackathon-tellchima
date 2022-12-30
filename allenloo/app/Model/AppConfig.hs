@@ -2,7 +2,10 @@ module Model.AppConfig where
 
 data AppConfig = AppConfig
   { apiKey :: String,
+    dbConnectionStr :: String,
     slackCommandSigningSecret :: String,
-    dbConnectionStr :: String
+    slackPostMessageApiEndpoint :: String,
+    slackChannelId :: String,
+    slackApiToken :: String
   }
   deriving (Show)

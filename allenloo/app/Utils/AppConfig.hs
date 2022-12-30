@@ -30,6 +30,9 @@ getAppConfig = do
   return $
     AppConfig
       { apiKey = loadRequiredConfigFromMap "API_KEY" configMap,
+        dbConnectionStr = dbConnectionStr,
         slackCommandSigningSecret = loadRequiredConfigFromMap "SLACK_COMMAND_SIGNING_SECRET" configMap,
-        dbConnectionStr = dbConnectionStr
+        slackPostMessageApiEndpoint = loadRequiredConfigFromMap "SLACK_POST_MESSAGE_API_ENDPOINT" configMap,
+        slackChannelId = loadRequiredConfigFromMap "SLACK_CHANNEL_ID" configMap,
+        slackApiToken = loadRequiredConfigFromMap "SLACK_API_TOKEN" configMap
       }

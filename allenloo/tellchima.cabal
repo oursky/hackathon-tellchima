@@ -32,10 +32,12 @@ executable tellchima
         Database.Repository.MessageRepository
         Model.TellChimaWebhookRequest
         Model.TellChimaWebhookResponse
+        Model.PostSlackMessageRequest
         Model.TellChimaException
         Model.ErrorResponse
         Model.AppConfig
         Model.AppDependencies
+        Service.Slack
         Utils.AppConfig
         Utils.VerifySlackWebhookSignature
 
@@ -55,6 +57,8 @@ executable tellchima
         cryptohash-sha256 ==0.11.102.1,
         bytestring ==0.11.3.1,
         base16-bytestring ==1.0.2.0,
-        postgresql-simple ==0.6.5
+        postgresql-simple ==0.6.5,
+        http-client ==0.7.13.1,
+        http-conduit ==2.3.8
     hs-source-dirs: app
     default-language: Haskell2010
