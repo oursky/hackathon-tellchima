@@ -3,10 +3,14 @@
 module Controller.Webhook.TellChima where
 
 import Control.Exception (SomeException, throw, try)
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Reader (ReaderT, ask, runReaderT)
 import Data.Aeson
 import Data.ByteString.Lazy.UTF8 (toString)
 import Data.Data (Typeable)
 import GHC.Generics
+import Model.AppConfig
+import Model.AppDependencies
 import Model.ErrorResponse (badRequestResponse)
 import Model.TellChimaException
 import Model.TellChimaWebhookRequest
@@ -22,9 +26,11 @@ parseTellChimaWebhookRequest req = do
     Left _ -> throw (BadRequest "Failed to parse url encoded form")
     Right body -> return body
 
-tellChimaWebhookHandler :: Request -> IO Response
+tellChimaWebhookHandler :: Request -> ReaderT AppDependencies IO Response
 tellChimaWebhookHandler req = do
-  result <- try (parseTellChimaWebhookRequest req) :: IO (Either SomeException TellChimaWebhookRequest)
+  dep <- ask
+  let signingSecret = slackCommandSigningSecret $ config dep
+  result <- liftIO (try (parseTellChimaWebhookRequest req) :: IO (Either SomeException TellChimaWebhookRequest))
   case result of
     Left ex -> return badRequestResponse
     Right body ->

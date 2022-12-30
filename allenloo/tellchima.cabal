@@ -30,6 +30,9 @@ executable tellchima
         Model.TellChimaWebhookRequest
         Model.TellChimaException
         Model.ErrorResponse
+        Model.AppConfig
+        Model.AppDependencies
+        Utils.AppConfig
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -40,6 +43,9 @@ executable tellchima
         http-types ==0.12.3,
         aeson ==2.1.1.0,
         utf8-string ==1.0.2,
-        http-api-data ==0.5
+        http-api-data ==0.5,
+        dotenv ==0.10.0.0,
+        containers ==0.6.5.1,
+        mtl ==2.2.2
     hs-source-dirs: app
     default-language: Haskell2010
