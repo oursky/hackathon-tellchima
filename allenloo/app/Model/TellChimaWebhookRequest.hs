@@ -3,7 +3,6 @@
 
 module Model.TellChimaWebhookRequest where
 
-import Data.Aeson
 import GHC.Generics
 import Web.FormUrlEncoded
 
@@ -22,4 +21,4 @@ data TellChimaWebhookRequest = TellChimaWebhookRequest
     -- team_domain :: String,
     -- is_enterprise_install :: Bool,
   }
-  deriving (Generic, ToJSON, FromForm, Show)
+  deriving (Generic, FromForm, Show)

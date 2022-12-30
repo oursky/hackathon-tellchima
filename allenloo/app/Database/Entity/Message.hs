@@ -11,4 +11,4 @@ data MessageEntity = MessageEntity
     text :: String,
     published :: Bool
   }
-  deriving (Generic, ToRow, FromRow, Show)
+  deriving (Generic, FromRow, Show)

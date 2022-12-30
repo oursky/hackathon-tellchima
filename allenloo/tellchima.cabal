@@ -30,6 +30,7 @@ executable tellchima
         Database.Entity.Message
         Database.Repository.MessageRepository
         Model.TellChimaWebhookRequest
+        Model.TellChimaWebhookResponse
         Model.TellChimaException
         Model.ErrorResponse
         Model.AppConfig
