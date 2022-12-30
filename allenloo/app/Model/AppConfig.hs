@@ -1,7 +1,8 @@
 module Model.AppConfig where
 
 data AppConfig = AppConfig
-  { slackCommandSigningSecret :: String,
+  { apiKey :: String,
+    slackCommandSigningSecret :: String,
     dbConnectionStr :: String
   }
   deriving (Show)

@@ -4,7 +4,8 @@ module Main where
 
 import Control.Exception (SomeException, try)
 import Control.Monad.Reader (ReaderT, runReaderT)
-import Controller.Webhook.TellChima
+import Controller.Message.Publish (publishMessageHandler)
+import Controller.Webhook.TellChima (tellChimaWebhookHandler)
 import Model.AppConfig
 import Model.AppDependencies
 import Model.ErrorResponse (methodNotAllowedResponse, notFoundResponse, serverErrorResponse)
@@ -35,12 +36,19 @@ rootHandler :: Request -> ReaderT AppDependencies IO Response
 rootHandler req = do
   case rawPathInfo req of
     "/webhook/tell-chima" -> webhookTellChimaRoute req
+    "/message/publish" -> messagePublishRoute req
     _ -> notFoundRoute
 
 webhookTellChimaRoute :: Request -> ReaderT AppDependencies IO Response
 webhookTellChimaRoute req =
   case requestMethod req of
     "POST" -> tellChimaWebhookHandler req
+    _ -> return methodNotAllowedResponse
+
+messagePublishRoute :: Request -> ReaderT AppDependencies IO Response
+messagePublishRoute req =
+  case requestMethod req of
+    "POST" -> publishMessageHandler req
     _ -> return methodNotAllowedResponse
 
 notFoundRoute :: ReaderT AppDependencies IO Response

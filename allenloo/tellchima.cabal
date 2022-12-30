@@ -27,6 +27,7 @@ executable tellchima
     -- Modules included in this executable, other than Main.
     other-modules:
         Controller.Webhook.TellChima
+        Controller.Message.Publish
         Database.Entity.Message
         Database.Repository.MessageRepository
         Model.TellChimaWebhookRequest

@@ -29,6 +29,7 @@ getAppConfig = do
           ]
   return $
     AppConfig
-      { slackCommandSigningSecret = loadRequiredConfigFromMap "SLACK_COMMAND_SIGNING_SECRET" configMap,
+      { apiKey = loadRequiredConfigFromMap "API_KEY" configMap,
+        slackCommandSigningSecret = loadRequiredConfigFromMap "SLACK_COMMAND_SIGNING_SECRET" configMap,
         dbConnectionStr = dbConnectionStr
       }
