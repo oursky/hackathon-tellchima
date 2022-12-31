@@ -6,22 +6,31 @@
 
 module Database.Repository.MessageRepository where
 
-import Data.ByteString.UTF8 (fromString)
-import Data.Int
+import Data.Int (Int64)
+import Data.List (intercalate)
 import Database.Entity.Message (MessageEntity)
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.SqlQQ (sql)
 import GHC.Generics
-import Model.AppConfig (AppConfig, dbConnectionStr)
+import Model.AppConfig (AppConfig)
+import Utils.Database (connectPsqlDb, toPsqlQuery, toSqlValue)
 
 data GetMessagesOption = GetMessagesOption
-  { published :: Bool
+  { published :: Maybe Bool
   }
 
 getMessages :: AppConfig -> GetMessagesOption -> IO [MessageEntity]
 getMessages appConfig option = do
-  dbConn <- connectPostgreSQL $ fromString $ dbConnectionStr appConfig
-  messages <- query_ dbConn "SELECT * FROM messages" :: IO [MessageEntity]
+  dbConn <- connectPsqlDb appConfig
+  let queryStringExprList =
+        [ "SELECT * FROM messages",
+          case published (option :: GetMessagesOption) of
+            Just p -> "WHERE published = " ++ toSqlValue p
+            Nothing -> "",
+          "ORDER BY id ASC"
+        ]
+  let queryStr = intercalate "\n" $ filter (not . null) queryStringExprList
+  messages <- query_ dbConn $ toPsqlQuery queryStr :: IO [MessageEntity]
   close dbConn
   return messages
 
@@ -33,7 +42,7 @@ data CreateMessagesArgs = CreateMessagesArgs
 
 createMessage :: AppConfig -> CreateMessagesArgs -> IO Int64
 createMessage appConfig message = do
-  dbConn <- connectPostgreSQL $ fromString $ dbConnectionStr appConfig
+  dbConn <- connectPsqlDb appConfig
   insertedCount <-
     withTransaction
       dbConn
@@ -43,7 +52,7 @@ createMessage appConfig message = do
 
 markMessagesPublished :: AppConfig -> [Int] -> IO Int64
 markMessagesPublished appConfig ids = do
-  dbConn <- connectPostgreSQL $ fromString $ dbConnectionStr appConfig
+  dbConn <- connectPsqlDb appConfig
   let query =
         [sql|
           UPDATE messages
