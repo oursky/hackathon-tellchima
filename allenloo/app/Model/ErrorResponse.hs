@@ -9,23 +9,23 @@ import Network.Wai (Request, Response, lazyRequestBody, responseBuilder, respons
 badRequestResponse =
   responseLBS
     status400
-    [(hContentType, "application/json")]
+    [(hContentType, "text/plain")]
     "400 - Bad Request"
 
 notFoundResponse =
   responseLBS
     status404
-    [(hContentType, "application/json")]
+    [(hContentType, "text/plain")]
     "404 - Not Found"
 
 methodNotAllowedResponse =
   responseLBS
     status405
-    [(hAllow, "POST"), (hContentType, "application/json")]
+    [(hAllow, "POST"), (hContentType, "text/plain")]
     "405 - Method Not Allowed"
 
 serverErrorResponse =
   responseLBS
     status500
-    [(hContentType, "application/json")]
+    [(hContentType, "text/plain")]
     "500 - Server Error"
