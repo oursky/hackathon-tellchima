@@ -12,6 +12,12 @@ badRequestResponse =
     [(hContentType, "text/plain")]
     "400 - Bad Request"
 
+forbiddenResponse =
+  responseLBS
+    status400
+    [(hContentType, "text/plain")]
+    "403 - Forbidden"
+
 notFoundResponse =
   responseLBS
     status404

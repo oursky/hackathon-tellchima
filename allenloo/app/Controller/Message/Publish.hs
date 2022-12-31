@@ -3,31 +3,54 @@
 module Controller.Message.Publish where
 
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Reader (ReaderT, asks, runReaderT)
+import Control.Monad.Reader (ReaderT, asks)
+import qualified Database.Entity.Message as MessageEntity
 import Database.Repository.MessageRepository
   ( GetMessagesOption (..),
     getMessages,
   )
-import Model.AppDependencies
-import Network.HTTP.Types (status200, status403)
+import qualified Database.Repository.MessageRepository as MessageRepo
+import Model.AppConfig (AppConfig (..))
+import Model.AppDependencies (AppDependencies (..))
+import Model.ErrorResponse (forbiddenResponse)
+import Network.HTTP.Types (status200, statusIsSuccessful)
 import Network.HTTP.Types.Header (hContentType)
 import Network.Wai
   ( Request (requestHeaders),
     Response,
-    lazyRequestBody,
     responseLBS,
   )
+import qualified Service.MessageBuilder as MessageBuilder
+import qualified Service.Slack as SlackService
+import Utils.VerifyApiKey (verifyApiKey)
 
-publishMessageHandler :: Request -> ReaderT AppDependencies IO Response
-publishMessageHandler req = do
+publishMessagesHandler :: Request -> ReaderT AppDependencies IO Response
+publishMessagesHandler req = do
+  appApiKey <- asks (apiKey . config)
+  -- verify request API key
+  let isVerified = verifyApiKey appApiKey (requestHeaders req)
+  if not isVerified
+    then return forbiddenResponse
+    else publishMessages req
+
+publishMessages :: Request -> ReaderT AppDependencies IO Response
+publishMessages req = do
   appConfig <- asks config
+
+  -- get unpublished messages
   let getMessagesOption =
         GetMessagesOption
-          { published = False
+          { published = Just False
           }
   unpublishedMessages <- liftIO $ getMessages appConfig getMessagesOption
-  liftIO $ putStrLn "Got unpublished messages:"
-  liftIO $ print unpublishedMessages
+
+  -- publish on Slack by posting summary
+  let messageText = MessageBuilder.buildPublishMessageTextBody (slackCommandName appConfig) unpublishedMessages
+  liftIO $ SlackService.postSlackMessage appConfig messageText
+
+  -- update published flag in database
+  liftIO $ MessageRepo.markMessagesPublished appConfig (map MessageEntity.id unpublishedMessages)
+
   return $
     responseLBS
       status200
