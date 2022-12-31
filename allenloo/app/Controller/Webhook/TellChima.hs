@@ -4,23 +4,20 @@
 module Controller.Webhook.TellChima where
 
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Reader (ReaderT, asks, runReaderT)
-import Data.Aeson
+import Control.Monad.Reader (ReaderT, asks)
+import Data.Aeson (encode)
 import Data.ByteString (toStrict)
-import Data.Data (Typeable)
 import Database.Entity.Message (MessageEntity (..))
-import Database.PostgreSQL.Simple
-import Database.Repository.MessageRepository
+import qualified Database.Repository.MessageRepository as MessageRepo
   ( CreateMessagesArgs (..),
     createMessage,
   )
-import GHC.Generics
-import Model.AppConfig
-import Model.AppDependencies
+import Model.AppConfig (AppConfig (..))
+import Model.AppDependencies (AppDependencies (..))
 import Model.ErrorResponse (badRequestResponse)
-import Model.TellChimaException
-import Model.TellChimaWebhookRequest as WebhookRequest
-import Model.TellChimaWebhookResponse
+import Model.TellChimaWebhookRequest (TellChimaWebhookRequest)
+import qualified Model.TellChimaWebhookRequest as WebhookRequest
+import Model.TellChimaWebhookResponse (TellChimaWebhookResponse (..))
 import Network.HTTP.Types (status200, status400)
 import Network.HTTP.Types.Header (hContentType)
 import Network.Wai
@@ -29,8 +26,8 @@ import Network.Wai
     lazyRequestBody,
     responseLBS,
   )
-import Utils.VerifySlackWebhookSignature
-import Web.FormUrlEncoded
+import Utils.VerifySlackWebhookSignature (verifySlackWebhookSignature)
+import Web.FormUrlEncoded (urlDecodeAsForm)
 
 tellChimaWebhookHandler :: Request -> ReaderT AppDependencies IO Response
 tellChimaWebhookHandler req = do
@@ -54,11 +51,11 @@ processParsedWebhookRequest :: TellChimaWebhookRequest -> ReaderT AppDependencie
 processParsedWebhookRequest requestBody = do
   appConfig <- asks config
   let message =
-        CreateMessagesArgs
+        MessageRepo.CreateMessagesArgs
           { text = WebhookRequest.text requestBody,
             published = False
           }
-  liftIO $ createMessage appConfig message
+  liftIO $ MessageRepo.createMessage appConfig message
 
   return $
     responseLBS
