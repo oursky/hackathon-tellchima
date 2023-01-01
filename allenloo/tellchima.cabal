@@ -1,0 +1,70 @@
+cabal-version:      2.4
+name:               tellchima
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             axolotl0212
+maintainer:         allenl0212@gmail.com
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+executable tellchima
+    main-is: Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules:
+        Controller.Webhook.TellChima
+        Controller.Message.Publish
+        Controller.Action.PostReminder
+        Database.Entity.Message
+        Database.Repository.MessageRepository
+        Model.TellChimaWebhookRequest
+        Model.TellChimaWebhookResponse
+        Model.PostSlackMessageRequest
+        Model.TellChimaException
+        Model.ErrorResponse
+        Model.AppConfig
+        Model.AppDependencies
+        Service.Slack
+        Service.MessageBuilder
+        Types
+        Utils.AppConfig
+        Utils.Database
+        Utils.VerifyApiKey
+        Utils.VerifySlackWebhookSignature
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:
+        base ^>=4.16.4.0,
+        warp ==3.3.23,
+        wai ==3.2.3,
+        http-types ==0.12.3,
+        aeson ==2.1.1.0,
+        utf8-string ==1.0.2,
+        http-api-data ==0.5,
+        dotenv ==0.10.0.0,
+        containers ==0.6.5.1,
+        mtl ==2.2.2,
+        cryptohash-sha256 ==0.11.102.1,
+        bytestring ==0.11.3.1,
+        base16-bytestring ==1.0.2.0,
+        postgresql-simple ==0.6.5,
+        http-client ==0.7.13.1,
+        http-conduit ==2.3.8,
+        string-interpolate ==0.3.2.0
+    hs-source-dirs: app
+    default-language: Haskell2010
