@@ -4,7 +4,7 @@
 module Controller.Webhook.TellChima where
 
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Reader (ReaderT, asks)
+import Control.Monad.Reader (asks)
 import Data.Aeson (encode)
 import Data.ByteString (toStrict)
 import Database.Entity.Message (MessageEntity (..))
@@ -26,10 +26,11 @@ import Network.Wai
     lazyRequestBody,
     responseLBS,
   )
+import Types (AppContainer, AppEndpointHandler)
 import Utils.VerifySlackWebhookSignature (verifySlackWebhookSignature)
 import Web.FormUrlEncoded (urlDecodeAsForm)
 
-tellChimaWebhookHandler :: Request -> ReaderT AppDependencies IO Response
+tellChimaWebhookHandler :: AppEndpointHandler
 tellChimaWebhookHandler req = do
   appConfig <- asks config
   let signingSecret = slackCommandSigningSecret appConfig
@@ -47,7 +48,7 @@ tellChimaWebhookHandler req = do
           [(hContentType, "application/json")]
           "Failed to verify webhook signature"
 
-processParsedWebhookRequest :: TellChimaWebhookRequest -> ReaderT AppDependencies IO Response
+processParsedWebhookRequest :: TellChimaWebhookRequest -> AppContainer Response
 processParsedWebhookRequest requestBody = do
   appConfig <- asks config
   let message =

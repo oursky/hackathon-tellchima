@@ -3,7 +3,7 @@
 module Controller.Message.Publish where
 
 import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Reader (ReaderT, asks)
+import Control.Monad.Reader (asks)
 import qualified Database.Entity.Message as MessageEntity
 import Database.Repository.MessageRepository
   ( GetMessagesOption (..),
@@ -12,28 +12,18 @@ import Database.Repository.MessageRepository
 import qualified Database.Repository.MessageRepository as MessageRepo
 import Model.AppConfig (AppConfig (..))
 import Model.AppDependencies (AppDependencies (..))
-import Model.ErrorResponse (forbiddenResponse)
-import Network.HTTP.Types (status200, statusIsSuccessful)
+import Network.HTTP.Types (status200)
 import Network.HTTP.Types.Header (hContentType)
-import Network.Wai
-  ( Request (requestHeaders),
-    Response,
-    responseLBS,
-  )
+import Network.Wai (responseLBS)
 import qualified Service.MessageBuilder as MessageBuilder
 import qualified Service.Slack as SlackService
-import Utils.VerifyApiKey (verifyApiKey)
+import Types (AppEndpointHandler)
+import Utils.VerifyApiKey (applyVerifyApiKey)
 
-publishMessagesHandler :: Request -> ReaderT AppDependencies IO Response
-publishMessagesHandler req = do
-  appApiKey <- asks (apiKey . config)
-  -- verify request API key
-  let isVerified = verifyApiKey appApiKey (requestHeaders req)
-  if not isVerified
-    then return forbiddenResponse
-    else publishMessages req
+publishMessagesHandler :: AppEndpointHandler
+publishMessagesHandler = applyVerifyApiKey publishMessages
 
-publishMessages :: Request -> ReaderT AppDependencies IO Response
+publishMessages :: AppEndpointHandler
 publishMessages req = do
   appConfig <- asks config
 
