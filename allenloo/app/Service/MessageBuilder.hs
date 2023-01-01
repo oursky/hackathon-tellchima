@@ -21,3 +21,7 @@ buildPublishMessageTextBody commandName messages =
         ++ "\n"
         ++ List.intercalate "\n" (map buildPublishMessageTextBodyRow messages)
     else "No message is received today"
+
+buildReminderTextBody :: String -> String
+buildReminderTextBody commandName =
+  [i|If you have something to post, please `/#{commandName}`. Publishes daily at 5pm.|]

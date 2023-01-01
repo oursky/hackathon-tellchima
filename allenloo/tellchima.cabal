@@ -28,6 +28,7 @@ executable tellchima
     other-modules:
         Controller.Webhook.TellChima
         Controller.Message.Publish
+        Controller.Action.PostReminder
         Database.Entity.Message
         Database.Repository.MessageRepository
         Model.TellChimaWebhookRequest
