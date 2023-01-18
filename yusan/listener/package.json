@@ -1,0 +1,19 @@
+{
+  "esy": {
+    "build": "dune build -p app"
+  },
+  "dependencies": {
+    "@opam/caqti-driver-sqlite3": "1.9.0",
+    "@opam/conf-libssl": "3",
+    "@opam/dream": "1.0.0~alpha4",
+    "@opam/dune": "*",
+    "@opam/ppx_yojson_conv": "v0.15.1",
+    "ocaml": "4.14.0"
+  },
+  "devDependencies": {
+    "@opam/ocaml-lsp-server": "*"
+  },
+  "resolutions": {
+    "esy-openssl": "esy-packages/esy-openssl#619ae2d46ca981ec26ab3287487ad98b157a01d1"
+  }
+}

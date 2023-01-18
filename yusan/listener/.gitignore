@@ -1,0 +1,7 @@
+*.sqlite*
+*.install
+.env
+_build/
+_esy/
+esy.lock/
+node_modules/
