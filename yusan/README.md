@@ -3,13 +3,13 @@
 ```mermaid
 sequenceDiagram
     Slack ->> Listener: /tell-china ...
-    Listener -->> Slack:
+    Listener -->> Slack: 
     Slack ->> Listener: /untell-china ...
-    Listener -->> Slack:
+    Listener -->> Slack: 
     Publisher ->> Listener: get messages
-    Listener -->> Publisher:
+    Listener -->> Publisher: 
     Publisher ->> Hacker News: get top stories
-    Hacker News -->> Publisher:
+    Hacker News -->> Publisher: 
     Publisher ->> Slack: post chima summary
 ```
 
