@@ -1,4 +1,4 @@
-use tell_machi::slack_service;
+use tell_machi::services::slack_service;
 
 #[actix_web::main]
 async fn main() {

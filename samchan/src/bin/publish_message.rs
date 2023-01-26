@@ -4,7 +4,8 @@ use diesel::{
     PgConnection,
 };
 use dotenvy::dotenv;
-use tell_machi::{message_service::publish_message, Pool};
+use tell_machi::services::message_service;
+use tell_machi::Pool;
 
 #[actix_web::main]
 async fn main() {
@@ -14,5 +15,5 @@ async fn main() {
     let pool: Pool = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool.");
-    publish_message(web::Data::new(pool)).await;
+    message_service::publish_message(web::Data::new(pool)).await;
 }

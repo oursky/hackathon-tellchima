@@ -2,9 +2,10 @@ use actix_web::web;
 use diesel::prelude::*;
 
 use crate::{
-    errors::ServiceError,
-    models::{Message, NewMessage},
-    slack_service, Pool,
+    models::db::{Message, NewMessage},
+    models::errors::ServiceError,
+    services::slack_service,
+    Pool,
 };
 
 pub fn create_message(text: &str, pool: web::Data<Pool>) -> Result<Message, ServiceError> {

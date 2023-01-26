@@ -1,9 +1,7 @@
 use diesel::{Insertable, Queryable};
 use serde::{Deserialize, Serialize};
 
-use crate::generate_random_string;
-
-use super::schema::*;
+use crate::{schema::*, utils::generate_random_string};
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = messages)]
