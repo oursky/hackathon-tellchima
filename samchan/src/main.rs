@@ -4,7 +4,10 @@ use diesel::{
     PgConnection,
 };
 use dotenvy::dotenv;
-use tell_machi::{handlers::command_handler, Pool};
+use tell_machi::{
+    handlers::{command_handler, hello_handler},
+    Pool,
+};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -20,6 +23,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
             .service(command_handler::handler)
+            .service(hello_handler::handler)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

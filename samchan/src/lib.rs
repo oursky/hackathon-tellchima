@@ -13,6 +13,7 @@ pub mod services {
 
 pub mod handlers {
     pub mod command_handler;
+    pub mod hello_handler;
 }
 
 pub mod models {
