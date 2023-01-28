@@ -1,15 +1,16 @@
-use crate::services::message_service;
+use crate::services::slack_service::SignedMessage;
+use crate::services::{message_service, slack_service::verify_signed_message};
 use crate::Pool;
-use actix_web::{post, web, Result};
+use actix_web::{post, web, HttpRequest, Result};
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct Info {
     command: String,
     text: String,
 }
 
-fn tell(info: web::Form<Info>, pool: web::Data<Pool>) -> Result<String> {
+fn tell(info: Info, pool: web::Data<Pool>) -> Result<String> {
     if info.text.trim().len() == 0 {
         return Ok(format!(
             "
@@ -33,7 +34,7 @@ fn tell(info: web::Form<Info>, pool: web::Data<Pool>) -> Result<String> {
     }
 }
 
-async fn untell(info: web::Form<Info>, pool: web::Data<Pool>) -> Result<String> {
+async fn untell(info: Info, pool: web::Data<Pool>) -> Result<String> {
     let re = regex::Regex::new(r"#(\d+) (\w+)").unwrap();
     let ca = re.captures(&info.text).unwrap();
     let (message_id, message_code) = (&ca[1], &ca[2]);
@@ -50,7 +51,27 @@ async fn untell(info: web::Form<Info>, pool: web::Data<Pool>) -> Result<String> 
 }
 
 #[post("/")]
-async fn handler(info: web::Form<Info>, pool: web::Data<Pool>) -> Result<String> {
+async fn handler(req: HttpRequest, body: String, pool: web::Data<Pool>) -> Result<String> {
+    let signing_secret =
+        std::env::var("SLACK_SINGING_SECRET").expect("SLACK_SINGING_SECRET must be set");
+    let signed_message = SignedMessage::new(&body, &req.headers());
+    if let Err(_) = signed_message {
+        return Ok(format!("Failed to get signed_message"));
+    }
+    let res = verify_signed_message(
+        &SignedMessage::new(&body, &req.headers()).unwrap(),
+        &signing_secret,
+    );
+    match res {
+        Err(_) => {
+            return Ok(format!("Failed to verify_signed_message"));
+        }
+        Ok(false) => {
+            return Ok(format!("Invalid signature"));
+        }
+        _ => (),
+    }
+    let info: Info = serde_urlencoded::from_str(&body)?;
     match &info.command {
         x if x == "/tell-machi" => tell(info, pool),
         x if x == "/untell-machi" => untell(info, pool).await,
