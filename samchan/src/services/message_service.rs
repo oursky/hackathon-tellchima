@@ -34,7 +34,8 @@ pub async fn publish_message(pool: web::Data<Pool>) {
         .get_results::<Message>(&mut conn);
     println!("{:?}", pending_messages);
     for message in pending_messages.unwrap().iter() {
-        slack_service::send_message(&message.body).await.unwrap();
+        let text = format!("`#{}` {}", &message.id, &message.body);
+        slack_service::send_message(&text).await.unwrap();
         diesel::update(messages.filter(id.eq(message.id)))
             .set(published.eq(true))
             .execute(&mut conn)
