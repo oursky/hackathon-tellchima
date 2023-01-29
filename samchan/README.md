@@ -1,3 +1,8 @@
+# Description
+
+It is a tellchima written in Rust, using the [actix-web](https://github.com/actix/actix-web) web 
+app framework and the [diesel](https://github.com/diesel-rs/diesel) ORM.
+
 # Development Rust Environment Setup
 
 ## Using nix
